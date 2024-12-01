@@ -86,4 +86,5 @@ Once you've calculated the total similarity score, that will be your solution fo
 
 ### Goal:
 Solve both parts of the puzzle by calculating the total distance between the two lists (Part 1) and the total similarity score (Part 2).
-```
+
+
