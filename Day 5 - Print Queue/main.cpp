@@ -6,7 +6,8 @@
 #include <fstream>
 
 
-int main() {
+int main() 
+{
     std::ifstream file("input.txt");
     if (!file) 
     {
