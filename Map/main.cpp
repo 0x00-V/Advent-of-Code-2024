@@ -42,6 +42,9 @@ int main()
 
 
                 // ^ means check  row - until # is detected.
+                // keep track of ^ char
+                int guard_row = row;
+                int guard_col = col;
                 while (map[row-up][col] != '#')
                 {
                     std::cout << map[row-up+1][col] << '\n'; // collision detected
