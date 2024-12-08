@@ -3,10 +3,8 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <set>
 
-// if . move, else if # turn 90 move
-
-// for 90 deg, use diff dir symbol, move along facing vertcies
 
 void mapToGrid(std::ifstream& file, std::vector<std::vector<char>>& grid)
 {
@@ -15,6 +13,19 @@ void mapToGrid(std::ifstream& file, std::vector<std::vector<char>>& grid)
     {
         std::vector<char> row(line.begin(), line.end());
         grid.push_back(row);
+    }
+}
+
+
+void printGrid(const std::vector<std::vector<char>>& map)
+{
+    for(const auto& row : map)
+    {
+        for(char cell : row)
+        {
+            std::cout << cell;
+        }
+        std::cout << '\n';
     }
 }
 
@@ -30,37 +41,50 @@ int main()
     std::vector<std::vector<char>> map;
     mapToGrid(file, map);
 
-    int up{1};
-    for(size_t row = 0; row < map.size(); ++row)
+    int n = map.size();
+    int m = map[0].size();
+    
+    bool found = false;
+    int guard_row, guard_col;
+
+    for(int row = 0; row < n; ++row)
     {
-        for(size_t col = 0; col < map[row].size(); ++col)
+        for(int col = 0; col < m; ++col)
         {
             if(map[row][col] == '^')
             {
-                std::cout << "Found Guard(^) at pos: (" << row << col << ")\n";
-                std::cout << map[row-1][col-1] << map[row-1][col] << map[row-1][col+1] << '\n' << map[row][col-1] << map[row][col] << map[row][col+1] << '\n' << map[row+1][col-1] << map[row+1][col] << map[row+1][col+1];
-
-
-                // ^ means check  row - until # is detected.
-                // keep track of ^ char
-                int guard_row = row;
-                int guard_col = col;
-                while (map[row-up][col] != '#')
-                {
-                    std::cout << map[row-up+1][col] << '\n'; // collision detected
-                    --up;
-                }
+                guard_row = row;
+                guard_col = col;
+                found = true;
+                break;
             }
-
-            
-            
-            
         }
-
+        if(found) break;
     }
-    
+    int direction = 0;
+    int d_deltas[4][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 
+    std::set<std::pair<int, int>> seen;
 
+    while(true)
+    {
+        seen.insert({guard_row, guard_col});
 
+        int next_row = guard_row + d_deltas[direction][0];
+        int next_col = guard_col + d_deltas[direction][1];
+
+        if (!(0 <= next_row && next_row < n && 0 <= next_col && next_col < m)) break;
+
+        if(map[next_row][next_col] == '#')
+        {
+            direction = (direction + 1) % 4;
+        } else 
+        {
+            guard_row = next_row;
+            guard_col = next_col;
+        }
+    }
+    printGrid(map);
+    std::cout << "Guard Moves: " << seen.size() << '\n';
     return 0;
 }
